@@ -1,0 +1,48 @@
+CC Checker Bot – VPS Management Cheat Sheet
+=========================================
+
+Project location: /root/ccbot
+Systemd service:  ccbot.service
+Python venv:      /root/ccbot/.venv
+
+1. Update code from GitHub
+--------------------------
+ssh root@2.59.134.165
+cd /root/ccbot
+git pull origin main
+
+2. Update dependencies (if requirements.txt changes)
+----------------------------------------------------
+source .venv/bin/activate
+pip install -r requirements.txt
+# or install individual packages, e.g.:
+pip install aiohttp
+
+3. Restart the bot
+------------------
+sudo systemctl restart ccbot
+sudo systemctl status ccbot --no-pager
+
+4. View live logs
+-----------------
+sudo journalctl -u ccbot -f
+
+5. Edit systemd service (token, paths, etc.)
+--------------------------------------------
+File: /etc/systemd/system/ccbot.service
+After edits:
+sudo systemctl daemon-reload
+sudo systemctl restart ccbot
+
+6. Manual run for debugging
+---------------------------
+cd /root/ccbot
+source .venv/bin/activate
+python run.py telegram
+
+7. Useful info
+--------------
+• TELEGRAM_BOT_TOKEN is set in ccbot.service Environment line.
+• Premium data lives in /root/ccbot/premium_data.json (keep backups).
+• Proxy settings and bot behavior are controlled inside run.py.
+
